@@ -1,0 +1,44 @@
+---
+- name: Acquire Apache APR tarball
+  shell: wget http://mirror.vorboss.net/apache//apr/apr-1.5.2.tar.gz && tar -zxvf apr-1.5.2.tar.gz -C {{ source_dir }}/httpd-2.4.25 >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}"
+
+- name: Configure Apache APR
+  shell: ./configure >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-1.5.2"
+
+- name: Compile Apache APR
+  shell: make >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-1.5.2"
+    creates: /var/log/apache_installation.log
+
+- name: Install Apache APR
+  shell: make install >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-1.5.2"
+
+
+- name: Acquire Apache APR Util tarball
+  shell: wget http://mirror.vorboss.net/apache//apr/apr-util-1.5.4.tar.gz && tar -zxvf apr-util-1.5.4.tar.gz -C {{ source_dir }}/httpd-2.4.25 >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}"
+
+- name: Configure Apache APR Util
+  shell: ./configure --with-apr={{ source_dir }}/httpd-2.4.25/apr-1.5.2 >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-util-1.5.4"
+
+- name: Compile Apache APR Util
+  shell: make >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-util-1.5.4"
+    creates: /var/log/apache_installation.log
+
+- name: Install Apache APR Util
+  shell: make install >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25/apr-util-1.5.4"
+  ignore_errors: yes

@@ -1,0 +1,6 @@
+Host iwserver
+  HostName ec2-52-214-115-104.eu-west-1.compute.amazonaws.com
+#  HostName 52.214.115.104
+  IdentityFile /home/rory/Documents/Devops/Assignment/id_rsa
+  User ubuntu
+  LocalForward 8080 localhost:80

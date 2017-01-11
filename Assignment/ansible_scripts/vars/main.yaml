@@ -1,0 +1,10 @@
+---
+source_dir: /tmp/apache
+install_dir: /opt/apache
+port: 80
+server_admin: webmasters@leodis.ac.uk
+server_name: localhost
+document_root: /opt/web/www
+log_level: warn
+user: root
+group: root

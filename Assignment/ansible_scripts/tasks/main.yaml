@@ -1,0 +1,53 @@
+---
+- name: Include system variables
+  include_vars: "../vars/main.yaml"
+
+- name: Create tmp directory
+  file:
+    path: "{{ source_dir }}"
+    state: directory
+    mode: '0777'
+
+- name: Install required packages
+  apt:
+    name: make
+    state: present
+
+- name: Acquire Apache tarball
+  shell: wget http://www.mirrorservice.org/sites/ftp.apache.org//httpd/httpd-2.4.25.tar.gz && tar -zxvf httpd-2.4.25.tar.gz -C {{ source_dir }} >> /var/log/apache_installation.log
+  args:
+    creates: /var/log/apache_installation.log
+
+- include: dependencies.yaml
+
+- name: Configure Apache Web server
+  shell: ./configure --prefix={{ install_dir }} --with-included-apr={{ source_dir }}/httpd-2.4.25/apr-1.5.2 >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25"
+
+- name: Compile Apache Web server
+  shell: make >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25"
+    creates: /var/log/apache_installation.log
+
+- name: Install Apache Web server
+  shell: make install >> /var/log/apache_installation.log
+  args:
+    chdir: "{{ source_dir }}/httpd-2.4.25"
+
+- name: Ensure Apache is always running
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags: httpd
+
+- name: Implement customer configuration
+  template:
+    src: httpd.conf.j2
+    dest: "{{ install_dir }}/conf/httpd.conf"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: '0644'
+  notify: restart apache web server
